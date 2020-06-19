@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+</head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+
+<body>
+<h1 class="header">Memoji</h1>
+
+<section class="field_4_cards">
+
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+    <div class="field_4_cards__card card">
+        <div class="card_front"></div>
+        <div class="card_back">
+            <aside data-emoji class="card_back__emoji"></aside>
+        </div>
+    </div>
+</section>
+<script>
+    function findParentByElClassLvl(element, str, lvl) {
+        let el = element
+        for (i = 0; i < lvl; i++) {
+            if ($(el).parent(str)[0]) {
+                console.log($(el).parent(str)[0])
+                return $(el).parent(str)[0]
+            } else {
+                el = el.parentNode
+            }
+        }
+        return false
+    }
+
+    jQuery.fn.addEvent = function (type, listener, useCapture) {
+        var self = this.get(0);
+        if (self.addEventListener) {
+            self.addEventListener(type, listener, useCapture);
+        } else if (self.attachEvent) {
+            self.attachEvent('on' + type, listener);
+        }
+    }
+
+    function getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
+    }
+
+    var emojies = ["1F436", "1F437", "1F438", '1F439', '1F43A', '1F43B']
+    for (var i = 1; i <= 12; i++) {
+        let r = getRandomInt(5)
+        $(".field_4_cards__card:nth-of-type(" + i + ")").find(".card_back__emoji").attr("data-emoji", String.fromCodePoint("0x" + emojies[r]))
+    }
+    $('.field_4_cards').addEvent("click", function (event) {
+        if (findParentByElClassLvl(event.target, ".field_4_cards__card", 2)) {
+            let parent = findParentByElClassLvl(event.target, ".field_4_cards__card", 2)
+            if (parent.classList.contains('rotateY180')) {
+
+                parent.classList.remove('rotateY180')
+            } else {
+                parent.classList.add('rotateY180')
+            }
+        }
+    }, false)
+</script>
+</body>
+</html>
