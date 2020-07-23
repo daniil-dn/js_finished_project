@@ -15,7 +15,7 @@ h1 {
 }
 
 /*container*/
-.field_4_cards {
+.field {
     width: max-content;
     margin: 0 auto;
 
@@ -24,23 +24,23 @@ h1 {
     grid-gap: 25px;
 
     -webkit-perspective: 600px;
-    perspective: 600px;
     -moz-transform: perspective(600px);
-    -webkit-transform-style: preserve-3d;
-    -moz-transform-style: preserve-3d;
+    perspective: 600px;
+
     transform-style: preserve-3d;
+
     position: relative;
 }
 
 /*FLIPPER*/
-.field_4_cards__card {
+.field__card {
     width: 130px;
     height: 130px;
 
     position: relative;
 
     transform-style: preserve-3d;
-    transition: transform .3s linear;
+    transition: transform .7s linear;
 }
 
 
@@ -50,59 +50,37 @@ h1 {
 
     box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.5);
 
-
     position: absolute;
     top: 0;
     left: 0;
-
-    backface-visibility: hidden;
+    text-rendering: auto;
 }
 
-.card_front {
-    z-index: 2;
-
+.card_back {
     box-sizing: border-box;
 
     border: 5px solid rgb(255, 255, 255);
     border-radius: 9px;
     background: linear-gradient(45deg, #22AB93, #19668D);
-
-    transform: rotateY(0deg);
 }
 
-.card_back {
+.card_front {
     border-radius: 9px;
 
-    z-index: 3;
     transform: rotateY(-180deg);
-    background-color: white
+    background-color: white;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
-.card_back__emoji {
-    /*position: relative;*/
-    width: 100%;
-    height: 100%;
-    z-index: 3;
-}
-
-.card_back__emoji:before {
-    content: attr(data-emoji);
-    font-size: 75px;
-    width: 100%;
-    /*height: 100%;*/
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-
-    position: absolute;
-    z-index: -1;
+.card_emoji {
+    font-size: 85px;
+    width: min-content;
 }
 
 .rotateY180 {
     transform: rotateY(180deg);
 }
 
-/* Короткие классы для различных значений perspective */
-/* Определяем div.container, div.cube, и свойства граней куба */
