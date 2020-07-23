@@ -35,7 +35,8 @@ function Game(params) {
     this.emojis = params.emojis
     this.countCards = params.countCards
     this.mountEl = params.mountEl
-    this.renderField()
+    this.cards = this.renderField()
+
 }
 
 Game.prototype.makeEmojisMap = function () {
@@ -45,38 +46,51 @@ Game.prototype.makeEmojisMap = function () {
         emMap.push(el)
         emMap.push(el)
     })
-    emMap = emMap.slice(0, 12)
+    emMap = emMap.slice(0, this.countCards)
     emMap = getShuffledArray(emMap)
     return emMap
 }
-
 Game.prototype.renderField = function () {
-    let emMap = this.makeEmojisMap()
-    this.cardsArr = []
-    for (let i = 0; i <= this.countCards; i++) {
-        let card = new Card({id: i, emoji: emMap[i], mountEl: this.mountEl})
-        this.cardsArr.push(card)
+    let emojisMap = this.makeEmojisMap()
+    let cardsArr = emojisMap.map((current, id) => {
+        return new Card({id: id.toString(), emoji: current, mountEl: this.mountEl})
+    })
+
+    return cardsArr
+}
+Game.prototype.handler = function (event, thisElem) {
+    if (event.target.tagName !== 'SECTION') {
+
+        let card = this.cards.find((el) => {
+            return el.id === event.target.parentElement.id
+        })
+
+        card.flip()
+        let pairStatus = this.checkPair(card)
+        if (pairStatus) {
+            card.tagAsRight()
+        } else if (pairStatus === false) {
+            card.tagAsWrong
+        } else if (pairStatus === undefined) {
+            card.resetExPairStatus()
+        }
+
         console.log(card)
     }
-
 }
-Game.prototype.handler = function (event) {
-    if (event.target.className === 'card_back') {
-        event.target.parentElement.classList.add('rotateY180')
-    } else if (event.target.className === 'card_front') {
-        event.target.parentElement.classList. remove('rotateY180')
-    }
+Game.prototype.checkPair = function (card) {
+let pairCard = this.cards.find(element => {if (element.id === card.id) {return false} else { return element.emoji === card.emoji}})
+    console.log(pairCard)
 }
-
 
 function Card(params) {
     this.mountEl = params.mountEl
     this.emoji = params.emoji
     this.id = params.id
-    this.element = this.renderCard()
+    this.DOMElement = this.renderCard()
+
 
 }
-
 Card.prototype.renderCard = function () {
     let card = document.createElement('article')
     card.className = 'field__card'
@@ -97,17 +111,32 @@ Card.prototype.renderCard = function () {
 
     return card
 }
+Card.prototype.flip = function () {
 
+    this.DOMElement.classList.toggle('flipped')
+}
 
-var game = new Game({
+Card.prototype.tagAsRight = function () {
+    this.DOMElement.children[0].classList.add('greenBg')
+    this.DOMElement.classList.add('rightPair')
+}
+Card.prototype.tagAsWrong = function () {
+    this.DOMElement.children[0].classList.toggle('redBg')
+}
+Card.prototype.resetExPairStatus = function () {
+
+}
+game = new Game({
     emojis: [
         '🐶', '🐱', '🐭', '🐹', '🐰', '🐻', '🐼',
         '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐙',
         '🐵', '🦄', '🐞', '🦀', '🐟', '🐊', '🐓',
         '🦃', '🐿'
-    ], countCards: 11, mountEl: '.field',
+    ], countCards: 12, mountEl: '.field',
 })
-$(game.mountEl)[0].addEventListener('click', game.handler, true)
+$(game.mountEl)[0].addEventListener('click', (event) => {
+    game.handler(event, this)
+}, true)
 
 
 

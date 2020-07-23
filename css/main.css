@@ -71,14 +71,26 @@ h1 {
     z-index: 1;
     transform: rotateY(-180deg) translateZ(0.1px);
     background-color: white;
-    font-size: 75px;
+    font-size: 85px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 
-.rotateY180 {
+.flipped {
     transform: rotateY(180deg);
+}
+
+.greenBg {
+    background-color: #5AD66F;
+}
+
+.rignPair {
+    transform: rotateY(180deg);
+}
+
+.redBg {
+    background-color: #F44336;
 }
 
