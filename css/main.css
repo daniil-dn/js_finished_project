@@ -36,11 +36,12 @@ h1 {
 .field__card {
     width: 130px;
     height: 130px;
-
     position: relative;
 
+    cursor: default;
+
     transform-style: preserve-3d;
-    transition: transform .7s linear;
+    transition: transform .4s ease-in-out;
 }
 
 
@@ -58,7 +59,8 @@ h1 {
 
 .card_back {
     box-sizing: border-box;
-
+    z-index: 2;
+    backface-visibility: hidden;
     border: 5px solid rgb(255, 255, 255);
     border-radius: 9px;
     background: linear-gradient(45deg, #22AB93, #19668D);
@@ -66,19 +68,15 @@ h1 {
 
 .card_front {
     border-radius: 9px;
-
-    transform: rotateY(-180deg);
+    z-index: 1;
+    transform: rotateY(-180deg) translateZ(0.1px);
     background-color: white;
-
+    font-size: 75px;
     display: flex;
-    justify-content: center;
     align-items: center;
+    justify-content: center;
 }
 
-.card_emoji {
-    font-size: 85px;
-    width: min-content;
-}
 
 .rotateY180 {
     transform: rotateY(180deg);

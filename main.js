@@ -35,6 +35,7 @@ function Game(params) {
     this.emojis = params.emojis
     this.countCards = params.countCards
     this.mountEl = params.mountEl
+    this.renderField()
 }
 
 Game.prototype.makeEmojisMap = function () {
@@ -59,6 +60,13 @@ Game.prototype.renderField = function () {
     }
 
 }
+Game.prototype.handler = function (event) {
+    if (event.target.className === 'card_back') {
+        event.target.parentElement.classList.add('rotateY180')
+    } else if (event.target.className === 'card_front') {
+        event.target.parentElement.classList. remove('rotateY180')
+    }
+}
 
 
 function Card(params) {
@@ -77,23 +85,21 @@ Card.prototype.renderCard = function () {
 
     let card_front = document.createElement('div')
     card_front.className = 'card_front'
+    card_front.innerHTML = this.emoji
     card.appendChild(card_front)
 
     let card_back = document.createElement('div')
     card_back.className = "card_back"
     card.appendChild(card_back)
 
-    let card_emoji = document.createElement('div')
-    card_emoji.className = 'card_emoji'
-    card_emoji.innerHTML = this.emoji
-    card_front.appendChild(card_emoji)
+
     $(this.mountEl).append(card)
 
     return card
 }
 
 
-var g = new Game({
+var game = new Game({
     emojis: [
         '🐶', '🐱', '🐭', '🐹', '🐰', '🐻', '🐼',
         '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐙',
@@ -101,5 +107,8 @@ var g = new Game({
         '🦃', '🐿'
     ], countCards: 11, mountEl: '.field',
 })
-g.renderField()
+$(game.mountEl)[0].addEventListener('click', game.handler, true)
+
+
+
 
