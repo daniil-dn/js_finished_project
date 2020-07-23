@@ -75,12 +75,22 @@ Game.prototype.handler = function (event, thisElem) {
             card.resetExPairStatus()
         }
 
-        console.log(card)
+        // console.log(card)
     }
 }
 Game.prototype.checkPair = function (card) {
-let pairCard = this.cards.find(element => {if (element.id === card.id) {return false} else { return element.emoji === card.emoji}})
-    console.log(pairCard)
+    let pairCard = this.cards.find(element => {
+        if (element.id === card.id) {
+            return false
+        } else {
+            return element.emoji === card.emoji
+        }
+    })
+    console.log("pair" + pairCard)
+    if (pairCard.isFlipped()) {
+        card.tagAsRight()
+        pairCard.tagAsRight()
+    }
 }
 
 function Card(params) {
@@ -91,6 +101,7 @@ function Card(params) {
 
 
 }
+
 Card.prototype.renderCard = function () {
     let card = document.createElement('article')
     card.className = 'field__card'
@@ -119,10 +130,19 @@ Card.prototype.flip = function () {
 Card.prototype.tagAsRight = function () {
     this.DOMElement.children[0].classList.add('greenBg')
     this.DOMElement.classList.add('rightPair')
+    this.flip = () => { true}
 }
 Card.prototype.tagAsWrong = function () {
     this.DOMElement.children[0].classList.toggle('redBg')
 }
+Card.prototype.isFlipped = function () {
+    if (this.DOMElement.classList.contains('flipped')) {
+        return true
+    } else {
+        return false
+    }
+}
+
 Card.prototype.resetExPairStatus = function () {
 
 }
