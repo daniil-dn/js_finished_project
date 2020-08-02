@@ -53,7 +53,7 @@ Game.prototype.makeEmojisMap = function () {
 Game.prototype.renderField = function () {
     let emojisMap = this.makeEmojisMap()
     let cardsArr = emojisMap.map((current, id) => {
-        return new Card({id: id.toString(), emoji: current, mountEl: this.mountEl})
+        return new Card({id: id.toString(), emoji: current, mountEl: this.mountEl, game: this})
     })
 
     return cardsArr
@@ -66,13 +66,18 @@ Game.prototype.handler = function (event, thisElem) {
         })
 
         card.flip()
-        let pairStatus = this.checkPair(card)
-        if (pairStatus) {
+        let pairStatus = this.checkPair(card)//+
+        if (pairStatus.state === true) {
             card.tagAsRight()
-        } else if (pairStatus === false) {
-            card.tagAsWrong
-        } else if (pairStatus === undefined) {
-            card.resetExPairStatus()
+            pairStatus.pair.tagAsRight()//+
+        } else if (pairStatus.state === 'lonecard') {
+            return undefined
+        } else if (pairStatus.state === 'two_dif_cards') {
+            card.toggleWrong()
+            pairStatus.flippedCard.toggleWrong()
+            console.log(pairStatus)
+        }else if (pairStatus.state === 'reset'){
+            this.resetExPairStatus(pairStatus.flippedCard, pairStatus.flippedCard2)
         }
 
         // console.log(card)
@@ -86,19 +91,68 @@ Game.prototype.checkPair = function (card) {
             return element.emoji === card.emoji
         }
     })
-    console.log("pair" + pairCard)
-    if (pairCard.isFlipped()) {
-        card.tagAsRight()
-        pairCard.tagAsRight()
+    console.log('-pair card')
+    console.log(pairCard)
+    let flippedCard = this.cards.find(element => {
+        if (element.id === card.id || element.id === pairCard.id) {
+            return false
+        } else {
+            if (element.isFlipped()) {
+                return true
+            }
+        }
+    })
+    console.log('-flipped card')
+    console.log(flippedCard)
+    let flippedCard2 = undefined
+    if (flippedCard !== undefined) {
+        flippedCard2 = this.cards.find(element => {
+            if (element.id === card.id || element.id === flippedCard.id) {
+                return false
+            } else {
+                if (element.isFlipped()) {
+                    return true
+                }
+            }
+        });
+        console.log('-flipped card 2')
+        console.log(flippedCard2)
     }
+
+    if (pairCard.isFlipped()  && flippedCard2 == undefined) {
+        console.log('pairCard is flipped')
+        console.log('---------------------')
+        return {state: true, pair: pairCard}
+    } else if (flippedCard === undefined && flippedCard2 === undefined) {
+        console.log('alone card')
+        console.log('---------------------')
+        return {state: 'lonecard'}
+    } else if (flippedCard !== undefined && flippedCard2 === undefined) {
+        console.log('two_dif_cards')
+        console.log('---------------------')
+        return {state: 'two_dif_cards', flippedCard: flippedCard}
+    }else if(flippedCard2 !== undefined ){
+        console.log('reset')
+        console.log('---------------------')
+        return {state: 'reset', flippedCard: flippedCard, flippedCard2: flippedCard2}
+    }
+
 }
+Game.prototype.resetExPairStatus = function (otherCard, otherCard2) {
+    otherCard.flip()
+    otherCard.toggleWrong()
+
+    otherCard2.flip()
+    otherCard2.toggleWrong()
+}
+
 
 function Card(params) {
     this.mountEl = params.mountEl
     this.emoji = params.emoji
     this.id = params.id
     this.DOMElement = this.renderCard()
-
+this.game = params.game
 
 }
 
@@ -130,10 +184,17 @@ Card.prototype.flip = function () {
 Card.prototype.tagAsRight = function () {
     this.DOMElement.children[0].classList.add('greenBg')
     this.DOMElement.classList.add('rightPair')
-    this.flip = () => { true}
+    game.cards = game.cards.filter(value => {return value !== this})
+    this.flip = () => {
+        true
+    }
 }
-Card.prototype.tagAsWrong = function () {
-    this.DOMElement.children[0].classList.toggle('redBg')
+Card.prototype.toggleWrong = function () {
+    if (this.DOMElement.children[0].classList.contains('redBg')) {
+        this.DOMElement.children[0].classList.toggle('redBg')
+    } else {
+        this.DOMElement.children[0].classList.add('redBg')
+    }
 }
 Card.prototype.isFlipped = function () {
     if (this.DOMElement.classList.contains('flipped')) {
@@ -143,9 +204,15 @@ Card.prototype.isFlipped = function () {
     }
 }
 
-Card.prototype.resetExPairStatus = function () {
-
+Card.prototype.isWrong = function () {
+    if (this.DOMElement.classList.contains('redBg')) {
+        return true
+    } else {
+        return false
+    }
 }
+
+
 game = new Game({
     emojis: [
         '🐶', '🐱', '🐭', '🐹', '🐰', '🐻', '🐼',
