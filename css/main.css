@@ -93,4 +93,6 @@ h1 {
 .redBg {
     background-color: #F44336;
 }
-
+.wrongPair{
+    transform: rotateY(180deg);
+}

@@ -7,29 +7,11 @@ jQuery.fn.addEvent = function (type, listener, useCapture) {
     }
 }
 
-function getRandomInt(max) {
-    return Math.floor(Math.random() * Math.floor(max));
-}
-
-function findParentByElClassLvl(element, str, lvl) {
-    let el = element
-    for (let i = 0; i < lvl; i++) {
-        if ($(el).parent(str)[0]) {
-            console.log($(el).parent(str)[0])
-            return $(el).parent(str)[0]
-        } else {
-            el = el.parentNode
-        }
-    }
-    return false
-}
-
 function getShuffledArray(arr) {
     let result = arr
 
     return result.sort(() => Math.random() - 0.5)
 }
-
 
 function Game(params) {
     this.emojis = params.emojis
@@ -60,99 +42,50 @@ Game.prototype.renderField = function () {
 }
 Game.prototype.handler = function (event, thisElem) {
     if (event.target.tagName !== 'SECTION') {
-
         let card = this.cards.find((el) => {
             return el.id === event.target.parentElement.id
         })
+        if(!card.isWrong()) {
+            this.resetWrong()
+            card.flip()
 
-        card.flip()
-        let pairStatus = this.checkPair(card)//+
-        if (pairStatus.state === true) {
-            card.tagAsRight()
-            pairStatus.pair.tagAsRight()//+
-        } else if (pairStatus.state === 'lonecard') {
-            return undefined
-        } else if (pairStatus.state === 'two_dif_cards') {
-            card.toggleWrong()
-            pairStatus.flippedCard.toggleWrong()
-            console.log(pairStatus)
-        }else if (pairStatus.state === 'reset'){
-            this.resetExPairStatus(pairStatus.flippedCard, pairStatus.flippedCard2)
+            this.checkPair(card)
         }
-
-        // console.log(card)
     }
+}
+Game.prototype.resetWrong = function () {
+    let wrongCards = this.cards.filter(card =>{ return card.isWrong() })
+    .forEach(card => {card.toggleWrong(); card.flip()})
 }
 Game.prototype.checkPair = function (card) {
-    let pairCard = this.cards.find(element => {
-        if (element.id === card.id) {
-            return false
-        } else {
-            return element.emoji === card.emoji
+    let otherCards = this.cards.map((cur, index, array) => {
+        if (cur.isFlipped()) {
+            return cur
         }
     })
-    console.log('-pair card')
-    console.log(pairCard)
-    let flippedCard = this.cards.find(element => {
-        if (element.id === card.id || element.id === pairCard.id) {
-            return false
-        } else {
-            if (element.isFlipped()) {
-                return true
-            }
-        }
-    })
-    console.log('-flipped card')
-    console.log(flippedCard)
-    let flippedCard2 = undefined
-    if (flippedCard !== undefined) {
-        flippedCard2 = this.cards.find(element => {
-            if (element.id === card.id || element.id === flippedCard.id) {
-                return false
-            } else {
-                if (element.isFlipped()) {
-                    return true
-                }
-            }
-        });
-        console.log('-flipped card 2')
-        console.log(flippedCard2)
-    }
+    otherCards = otherCards.filter(card => card !== undefined && !card.isWrong())
+    console.log(otherCards)
 
-    if (pairCard.isFlipped()  && flippedCard2 == undefined) {
-        console.log('pairCard is flipped')
-        console.log('---------------------')
-        return {state: true, pair: pairCard}
-    } else if (flippedCard === undefined && flippedCard2 === undefined) {
-        console.log('alone card')
-        console.log('---------------------')
-        return {state: 'lonecard'}
-    } else if (flippedCard !== undefined && flippedCard2 === undefined) {
-        console.log('two_dif_cards')
-        console.log('---------------------')
-        return {state: 'two_dif_cards', flippedCard: flippedCard}
-    }else if(flippedCard2 !== undefined ){
-        console.log('reset')
-        console.log('---------------------')
-        return {state: 'reset', flippedCard: flippedCard, flippedCard2: flippedCard2}
+    if (otherCards.length < 2) {// one card on the field
+        return;
+    } else if (otherCards[0].emoji === otherCards[1].emoji) {
+        otherCards[0].tagAsRight()
+        otherCards[1].tagAsRight()
+    } else if (otherCards[0].emoji !== otherCards[1].emoji) {
+        otherCards[0].toggleWrong()
+        otherCards[1].toggleWrong()
+    } else if (otherCards.length > 2) {
+        return {state: 'reset', flippedCards: otherCards}
     }
 
 }
-Game.prototype.resetExPairStatus = function (otherCard, otherCard2) {
-    otherCard.flip()
-    otherCard.toggleWrong()
-
-    otherCard2.flip()
-    otherCard2.toggleWrong()
-}
-
 
 function Card(params) {
     this.mountEl = params.mountEl
     this.emoji = params.emoji
     this.id = params.id
     this.DOMElement = this.renderCard()
-this.game = params.game
+    this.game = params.game
 
 }
 
@@ -184,7 +117,9 @@ Card.prototype.flip = function () {
 Card.prototype.tagAsRight = function () {
     this.DOMElement.children[0].classList.add('greenBg')
     this.DOMElement.classList.add('rightPair')
-    game.cards = game.cards.filter(value => {return value !== this})
+    game.cards = game.cards.filter(value => {
+        return value !== this
+    })
     this.flip = () => {
         true
     }
@@ -192,8 +127,10 @@ Card.prototype.tagAsRight = function () {
 Card.prototype.toggleWrong = function () {
     if (this.DOMElement.children[0].classList.contains('redBg')) {
         this.DOMElement.children[0].classList.toggle('redBg')
+        this.DOMElement.classList.toggle('wrongPair')
     } else {
         this.DOMElement.children[0].classList.add('redBg')
+        this.DOMElement.classList.add('wrongPair')
     }
 }
 Card.prototype.isFlipped = function () {
@@ -203,15 +140,13 @@ Card.prototype.isFlipped = function () {
         return false
     }
 }
-
-Card.prototype.isWrong = function () {
-    if (this.DOMElement.classList.contains('redBg')) {
+Card.prototype.isWrong= function () {
+    if (this.DOMElement.classList.contains('wrongPair')) {
         return true
     } else {
         return false
     }
 }
-
 
 game = new Game({
     emojis: [
