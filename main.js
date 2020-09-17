@@ -18,6 +18,7 @@ function Game(params) {
     this.countCards = params.countCards
     this.mountEl = params.mountEl
     this.cards = this.renderField()
+    this.clickcounter = 0
 
 }
 
@@ -41,11 +42,23 @@ Game.prototype.renderField = function () {
     return cardsArr
 }
 Game.prototype.handler = function (event, thisElem) {
+    if (this.clickcounter === 0) {
+        this.clickcounter = 1
+        var timer = setInterval(function (th) {
+            return () => th.gameTime()
+        }(this), 1000)
+
+        setTimeout(() => {
+            clearInterval(timer);
+            loseGame()
+        }, 60000)
+    }
+
     if (event.target.tagName !== 'SECTION') {
         let card = this.cards.find((el) => {
             return el.id === event.target.parentElement.id
         })
-        if(!card.isWrong()) {
+        if (!card.isWrong()) {
             this.resetWrong()
             card.flip()
 
@@ -54,10 +67,15 @@ Game.prototype.handler = function (event, thisElem) {
     }
 }
 Game.prototype.resetWrong = function () {
-    let wrongCards = this.cards.filter(card =>{ return card.isWrong() })
-    .forEach(card => {card.toggleWrong(); card.flip()})
+    let wrongCards = this.cards.filter(card => {
+        return card.isWrong()
+    })
+        .forEach(card => {
+            card.toggleWrong();
+            card.flip()
+        })
 }
-Game.prototype.checkPair = function (card) {
+Game.prototype.checkPair = function () {
     let otherCards = this.cards.map((cur, index, array) => {
         if (cur.isFlipped()) {
             return cur
@@ -77,6 +95,38 @@ Game.prototype.checkPair = function (card) {
     } else if (otherCards.length > 2) {
         return {state: 'reset', flippedCards: otherCards}
     }
+
+}
+
+
+Game.prototype.gameTime = function () {
+    let curTimer = 1
+    console.log(this)
+    $('.timer ')[0].innerText = this.secToMins(curTimer)
+    curTimer += 1
+}
+Game.prototype.secToMins = function (sec) {
+    let res = ''
+    let mins = sec / 60
+    console.log(mins, sec)
+    mins = Math.floor(mins)
+    console.log(mins, sec)
+    sec = sec - 60 * mins
+
+    if (mins < 10) {
+        res = '0' + mins + ':'
+    } else {
+        res = mins + ':'
+    }
+    if (sec < 10) {
+        res = res + '0' + sec
+    } else {
+        res = res + sec
+    }
+
+    return res
+}
+Game.prototype.loseGame = function () {
 
 }
 
@@ -140,7 +190,7 @@ Card.prototype.isFlipped = function () {
         return false
     }
 }
-Card.prototype.isWrong= function () {
+Card.prototype.isWrong = function () {
     if (this.DOMElement.classList.contains('wrongPair')) {
         return true
     } else {

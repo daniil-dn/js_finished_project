@@ -6,13 +6,25 @@
     <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
-
+<title>Memoji</title>
 <body>
 <h1 class="header">Memoji</h1>
 
 <section class="field">
 
 </section>
+
+<aside class='timer'><span class="min">00</span>:<span class="sec">00</span></aside>
+<!--<aside class='pop-up-cover'>-->
+<!--    <div class="pop-up-cover_sign">-->
+<!--        <div class="sign">-->
+<!--            <div class="sign-win">  <span>W</span><span>i</span><span>n</span><span></span></div>-->
+<!--           <div class="sign-lose"> <span>L</span><span>o</span><span>s</span><span>e</span></div>-->
+<!--        </div>-->
+<!--        <button class="but">Play again</button>-->
+<!--    </div>-->
+<!--</aside>-->
+
 <script src="main.js"></script>
 </body>
 <script>
@@ -35,7 +47,8 @@
     Student.prototype = Object.create(Person.prototype);
     Student.prototype.constructor = Student;
     Student.prototype.getName = function () {
-        return 'Student ' + Person.prototype.getName.call(this);}
+        return 'Student ' + Person.prototype.getName.call(this);
+    }
 
     let jora = new Person('jora');
     let billy = new Student('Billy');

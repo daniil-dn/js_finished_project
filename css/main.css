@@ -1,9 +1,19 @@
+
+html {
+    overflow: hidden;
+}
+
 body {
+
     font-family: Arial, serif;
     background-color: #CFD0CF;
+    position: relative;
+    padding: 0;
+    margin: 0;
 }
 
 h1 {
+    width: 100%;
     margin: 40px auto;
     padding: 0 0 0 0;
 
@@ -93,6 +103,119 @@ h1 {
 .redBg {
     background-color: #F44336;
 }
-.wrongPair{
+
+.wrongPair {
     transform: rotateY(180deg);
+}
+
+
+/*timer*/
+.timer {
+}
+
+/*end timer*/
+
+/*pop-up window*/
+.pop-up-cover {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    background-color: rgba(67, 67, 68, 0.49);
+
+    z-index: 100;
+}
+
+.pop-up-cover_sign {
+    color: #434344;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max-content;
+    min-width: 350px;
+    height: max-content;
+    min-height: 180px;
+
+    background-color: #CFD0CF;
+    border-radius: 10px
+}
+
+.sign {
+    height: 50px;
+    width: 100%;
+    text-align: center;
+    margin: 30px 0 40px 0;
+    font-size: 48px;
+
+}
+
+.but {
+    height: 40px;
+
+    font-size: 20px;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 30px;
+    padding: 0 30px 0 30px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(-45deg, #22AB93, #19668D);
+    box-shadow: 1px 1px 1px;
+}
+
+.but:focus {
+    outline: none;
+}
+
+.but:active {
+    outline: none;
+    box-shadow: inset 2px 1px 8px;
+}
+
+/*end pop-up window*/
+
+
+/*animation*/
+@keyframes winLose {
+    0% {
+        -webkit-transform: scale(1, 1);
+    }
+    100% {
+        -webkit-transform: scale(1, 1.5);
+    }
+}
+
+.sign div span {
+    display: inline-block
+}
+
+.sign div span:nth-of-type(1) {
+    animation: 0.6s ease-in-out 0s infinite alternate winLose;
+}
+
+.sign div span:nth-of-type(2) {
+    animation: 0.6s ease-in-out 0.1s infinite alternate winLose;
+}
+
+.sign div span:nth-of-type(3) {
+    animation: 0.6s ease-in-out 0.2s infinite alternate winLose;
+}
+
+.sign div span:nth-of-type(4) {
+    animation: 0.6s ease-in-out 0.3s infinite alternate winLose;
+}
+
+/*end animation*/
+
+.timer {
+    margin: 30px auto 0 auto;
+
+    text-align: center;
+    font-family: Arial;
+    font-size: 32px;
+    line-height: 36px;
+
 }
