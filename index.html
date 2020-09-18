@@ -5,9 +5,10 @@
     <title>Title</title>
     <link rel="stylesheet" type="text/css" href="css/main.css">
 </head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <title>Memoji</title>
 <body>
+
 <h1 class="header">Memoji</h1>
 
 <section class="field">
@@ -15,15 +16,15 @@
 </section>
 
 <aside class='timer'><span class="min">00</span>:<span class="sec">00</span></aside>
-<!--<aside class='pop-up-cover'>-->
-<!--    <div class="pop-up-cover_sign">-->
-<!--        <div class="sign">-->
-<!--            <div class="sign-win">  <span>W</span><span>i</span><span>n</span><span></span></div>-->
-<!--           <div class="sign-lose"> <span>L</span><span>o</span><span>s</span><span>e</span></div>-->
-<!--        </div>-->
-<!--        <button class="but">Play again</button>-->
-<!--    </div>-->
-<!--</aside>-->
+<aside class='pop-up-cover display-none'>
+    <div class="pop-up-cover_sign">
+        <div class="sign">
+            <div class="sign-win display-none">  <span>W</span><span>i</span><span>n</span><span></span></div>
+           <div class="sign-lose display-none"> <span>L</span><span>o</span><span>s</span><span>e</span></div>
+        </div>
+        <button class="but">Play again</button>
+    </div>
+</aside>
 
 <script src="main.js"></script>
 </body>

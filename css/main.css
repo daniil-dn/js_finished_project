@@ -24,6 +24,10 @@ h1 {
     /*outline: 1px solid #ff0000;*/
 }
 
+.display-none {
+    display: none;
+}
+
 /*container*/
 .field {
     width: max-content;

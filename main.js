@@ -19,9 +19,17 @@ function Game(params) {
     this.mountEl = params.mountEl
     this.cards = this.renderField()
     this.clickcounter = 0
-
+    this.curTimer = 1
 }
 
+Game.prototype.renderField = function () {
+    let emojisMap = this.makeEmojisMap()
+    let cardsArr = emojisMap.map((current, id) => {
+        return new Card({id: id.toString(), emoji: current, mountEl: this.mountEl, game: this})
+    })
+
+    return cardsArr
+}
 Game.prototype.makeEmojisMap = function () {
     let ems = getShuffledArray(this.emojis)
     let emMap = []
@@ -33,28 +41,20 @@ Game.prototype.makeEmojisMap = function () {
     emMap = getShuffledArray(emMap)
     return emMap
 }
-Game.prototype.renderField = function () {
-    let emojisMap = this.makeEmojisMap()
-    let cardsArr = emojisMap.map((current, id) => {
-        return new Card({id: id.toString(), emoji: current, mountEl: this.mountEl, game: this})
-    })
-
-    return cardsArr
-}
 Game.prototype.handler = function (event, thisElem) {
     if (this.clickcounter === 0) {
         this.clickcounter = 1
-        var timer = setInterval(function (th) {
-            return () => th.gameTime()
-        }(this), 1000)
-
-        setTimeout(() => {
-            clearInterval(timer);
-            loseGame()
-        }, 60000)
+        this.startTimer()
     }
 
+
+    console.log(this.cards)
+
+    if (this.cards.length === 0) {
+        return
+    }
     if (event.target.tagName !== 'SECTION') {
+
         let card = this.cards.find((el) => {
             return el.id === event.target.parentElement.id
         })
@@ -65,6 +65,13 @@ Game.prototype.handler = function (event, thisElem) {
             this.checkPair(card)
         }
     }
+
+    if (this.cards.length === 0) {
+        this.showHIdeWinLose('win')
+    }
+}
+Game.prototype.resetClickCounter = function () {
+    this.clickcounter = 0
 }
 Game.prototype.resetWrong = function () {
     let wrongCards = this.cards.filter(card => {
@@ -82,7 +89,6 @@ Game.prototype.checkPair = function () {
         }
     })
     otherCards = otherCards.filter(card => card !== undefined && !card.isWrong())
-    console.log(otherCards)
 
     if (otherCards.length < 2) {// one card on the field
         return;
@@ -98,12 +104,31 @@ Game.prototype.checkPair = function () {
 
 }
 
+Game.prototype.startTimer = function (repeat = false) {
+    if (repeat === true) {
+        this.stopClearTimer()
+    }
 
+    this.timer = setInterval(function (th) {
+        return () => th.gameTime()
+    }(this), 1000)
+console.log('new timeout')
+    this.timeout = setTimeout(() => {
+        clearInterval(this.timer);
+        this.showHIdeWinLose('lose');
+        console.log('timeout')
+    }, 60000)
+}
 Game.prototype.gameTime = function () {
-    let curTimer = 1
-    console.log(this)
-    $('.timer ')[0].innerText = this.secToMins(curTimer)
-    curTimer += 1
+    $('.timer ')[0].innerText = this.secToMins(this.curTimer)
+    this.curTimer += 1;
+}
+Game.prototype.stopClearTimer = function () {
+    $('.timer')[0].innerText = this.secToMins(0)
+    clearInterval(this.timer)
+    clearTimeout(this.timeout)
+    this.curTimer = 1
+    console.log('clear and stop timer')
 }
 Game.prototype.secToMins = function (sec) {
     let res = ''
@@ -126,8 +151,35 @@ Game.prototype.secToMins = function (sec) {
 
     return res
 }
-Game.prototype.loseGame = function () {
 
+Game.prototype.showHIdeWinLose = function (wl) {
+    if (wl === 1 || wl === 'win') {
+        console.log('win')
+        $('.pop-up-cover').toggleClass('display-none')
+        $('.sign-win').toggleClass('display-none')
+        this.stopClearTimer()
+
+
+    } else if (wl === 'repeat') {
+        $('.sign-lose').addClass('display-none')
+        $('.sign-win').addClass('display-none')
+        $('.pop-up-cover').addClass('display-none')
+    } else {
+        console.log('lose')
+        $('.pop-up-cover').toggleClass('display-none')
+        $('.sign-lose').toggleClass('display-none')
+        this.stopClearTimer()
+
+    }
+}
+Game.prototype.newfield = function () {
+
+    this.cleanField()
+    this.cards = this.renderField()
+    this.resetClickCounter()
+}
+Game.prototype.cleanField = function () {
+    $('.field')[0].innerHTML = ''
 }
 
 function Card(params) {
@@ -159,6 +211,7 @@ Card.prototype.renderCard = function () {
 
     return card
 }
+
 Card.prototype.flip = function () {
 
     this.DOMElement.classList.toggle('flipped')
@@ -198,7 +251,7 @@ Card.prototype.isWrong = function () {
     }
 }
 
-game = new Game({
+var game = new Game({
     emojis: [
         '🐶', '🐱', '🐭', '🐹', '🐰', '🐻', '🐼',
         '🐨', '🐯', '🦁', '🐮', '🐷', '🐸', '🐙',
@@ -210,6 +263,11 @@ $(game.mountEl)[0].addEventListener('click', (event) => {
     game.handler(event, this)
 }, true)
 
+let j = 1
+j += 1
+$('.but')[0].addEventListener('click', (event) => {
 
+    game.showHIdeWinLose('repeat')
+    game.newfield()
 
-
+})
